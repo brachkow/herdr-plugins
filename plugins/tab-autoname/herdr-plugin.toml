@@ -1,0 +1,33 @@
+id = "brachkow.tab-autoname"
+name = "Tab Autoname"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+description = "Name tabs after the agent's title, the running command, or the folder"
+# Reads foreground processes through pane.process_info, which herdr fills on macOS and Linux
+platforms = ["macos", "linux"]
+
+# Herdr checks out the whole repository, so this installs from the workspace root lockfile
+[[build]]
+command = ["pnpm", "install", "--frozen-lockfile", "--filter", "."]
+
+[[build]]
+command = ["pnpm", "build"]
+
+# Herdr has no event for "the foreground command changed", so the startup process
+# stays alive and polls. It exits by itself once the Herdr server is gone.
+[[startup]]
+command = ["node", "dist/index.mjs"]
+
+[[actions]]
+id = "restart"
+title = "Tab Autoname: restart"
+description = "Start a fresh poller in place of the running one"
+contexts = ["global"]
+command = ["node", "dist/index.mjs"]
+
+[[actions]]
+id = "reset"
+title = "Tab Autoname: name this tab automatically again"
+description = "Undo a manual rename so the tab follows its pane again"
+contexts = ["pane"]
+command = ["node", "dist/reset.mjs"]

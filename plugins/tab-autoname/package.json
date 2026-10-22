@@ -1,0 +1,20 @@
+{
+  "name": "herdr-tab-autoname",
+  "version": "0.1.0",
+  "description": "Name Herdr tabs after the agent's title, the running command, or the folder",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@faker-js/faker": "catalog:",
+    "@herdr-plugins/shared": "workspace:*",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
