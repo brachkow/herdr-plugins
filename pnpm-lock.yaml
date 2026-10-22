@@ -217,9 +217,36 @@ importers:
 
   packages/shared:
     devDependencies:
+      '@faker-js/faker':
+        specifier: 'catalog:'
+        version: 10.6.0
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.5
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.5(@types/node@26.6.5)(vite@8.3.5(@types/node@26.6.5))
+
+  plugins/pull-request:
+    devDependencies:
+      '@faker-js/faker':
+        specifier: 'catalog:'
+        version: 10.6.0
+      '@herdr-plugins/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.5
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.1(typescript@7.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.5(@types/node@26.6.5)(vite@8.3.5(@types/node@26.6.5))
 
   plugins/tab-autoname:
     devDependencies:

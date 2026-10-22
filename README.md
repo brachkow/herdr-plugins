@@ -7,6 +7,7 @@ Plugins for [Herdr](https://herdr.dev). Each plugin lives in its own directory u
 - [Workspace Ports](plugins/workspace-ports) shows the TCP ports each workspace's processes listen on, under the workspace in the sidebar
 - [Tab Autoname](plugins/tab-autoname) names tabs after the agent's title, the running command, or the folder, and leaves tabs you named by hand alone
 - [Uncommitted](plugins/uncommitted) shows the number of uncommitted files next to each workspace's branch
+- [Pull Request](plugins/pull-request) shows the GitHub pull request number of each workspace's branch, and opens it from a key
 
 Install one with:
 
