@@ -1,7 +1,7 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { getSnapshot, reportWorkspaceToken, runPoller } from '@herdr-plugins/shared'
-import { countChanges, formatChanges, workspaceFolders } from './changes.ts'
+import { getSnapshot, reportWorkspaceToken, runPoller, workspaceFolders } from '@herdr-plugins/shared'
+import { countChanges, formatChanges } from './changes.ts'
 
 const POLL_INTERVAL_MS = 5000
 // The token outlives a few missed ticks, but disappears soon after the plugin dies
