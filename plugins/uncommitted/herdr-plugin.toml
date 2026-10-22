@@ -1,0 +1,25 @@
+id = "brachkow.uncommitted"
+name = "Uncommitted"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+description = "Show the number of uncommitted files under each workspace in the sidebar"
+platforms = ["macos", "linux"]
+
+# Herdr checks out the whole repository, so this installs from the workspace root lockfile
+[[build]]
+command = ["pnpm", "install", "--frozen-lockfile", "--filter", "."]
+
+[[build]]
+command = ["pnpm", "build"]
+
+# Herdr has no event for file changes, so the startup process stays alive and polls.
+# It exits by itself once the Herdr server is gone.
+[[startup]]
+command = ["node", "dist/index.mjs"]
+
+[[actions]]
+id = "restart"
+title = "Uncommitted: restart"
+description = "Start a fresh poller in place of the running one"
+contexts = ["global"]
+command = ["node", "dist/index.mjs"]
