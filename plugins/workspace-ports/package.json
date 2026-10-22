@@ -1,0 +1,20 @@
+{
+  "name": "herdr-workspace-ports",
+  "version": "0.1.0",
+  "description": "Show TCP ports listened on by each Herdr workspace in the sidebar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@faker-js/faker": "catalog:",
+    "@herdr-plugins/shared": "workspace:*",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}
