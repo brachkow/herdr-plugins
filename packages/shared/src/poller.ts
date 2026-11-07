@@ -1,7 +1,9 @@
 import { execFile } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { promisify } from 'node:util'
+import { socketPath } from './herdr.ts'
 
 // Herdr does not stop startup processes, so leave on our own once the server is gone
 const MAX_CONSECUTIVE_FAILURES = 10
@@ -17,12 +19,17 @@ const processStartTime = async (pid: number) => {
   }
 }
 
+// HERDR_PLUGIN_STATE_DIR is shared by every Herdr session (`herdr --session <name>`), so a single
+// pid file lets another session's startup hook kill this session's poller. Each session has its own socket.
+export const pollerPidFile = (stateDir: string, socket: string) =>
+  join(stateDir, `poller-${createHash('sha256').update(socket).digest('hex').slice(0, 12)}.json`)
+
 // Startup hooks run again on live handoff, so a new instance replaces the old one.
 // The start time guards against killing an unrelated process that reused the pid.
 const replacePreviousInstance = async () => {
   const stateDir = process.env.HERDR_PLUGIN_STATE_DIR
   if (!stateDir) return
-  const pidFile = join(stateDir, 'poller.json')
+  const pidFile = pollerPidFile(stateDir, socketPath)
   try {
     const previous = JSON.parse(readFileSync(pidFile, 'utf8')) as { pid: number; startedAt: string }
     if (previous.pid !== process.pid && (await processStartTime(previous.pid)) === previous.startedAt) {

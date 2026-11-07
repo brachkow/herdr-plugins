@@ -4,7 +4,7 @@ import { join } from 'node:path'
 
 const REQUEST_TIMEOUT_MS = 5000
 
-const socketPath = process.env.HERDR_SOCKET_PATH ?? join(homedir(), '.config', 'herdr', 'herdr.sock')
+export const socketPath = process.env.HERDR_SOCKET_PATH ?? join(homedir(), '.config', 'herdr', 'herdr.sock')
 
 let requestCounter = 0
 
