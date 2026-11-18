@@ -5,8 +5,8 @@ import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { socketPath } from './herdr.ts'
 
-// Herdr does not stop startup processes, so leave on our own once the server is gone
-const MAX_CONSECUTIVE_FAILURES = 10
+// The server can stall for minutes and then recover, so failed requests only slow the poller down
+const MAX_RETRY_DELAY_MS = 60_000
 
 const run = promisify(execFile)
 
@@ -41,6 +41,10 @@ const replacePreviousInstance = async () => {
   writeFileSync(pidFile, JSON.stringify({ pid: process.pid, startedAt: await processStartTime(process.pid) }))
 }
 
+// Doubles the wait after each failed tick in a row, up to a minute, or up to the interval if that is longer
+export const retryDelay = (intervalMs: number, failures: number) =>
+  Math.min(intervalMs * 2 ** failures, Math.max(intervalMs, MAX_RETRY_DELAY_MS))
+
 // Herdr has no events for most process changes, so plugins poll from a long-lived startup process.
 // Pass --once to run a single tick, which is what one-shot actions use.
 export const runPoller = async (tick: () => Promise<void>, intervalMs: number) => {
@@ -49,8 +53,11 @@ export const runPoller = async (tick: () => Promise<void>, intervalMs: number) =
     return
   }
   await replacePreviousInstance()
+  // Herdr does not stop startup processes. They are children of the server, and the OS
+  // gives them a new parent once the server exits, so that is the signal to leave.
+  const serverPid = process.ppid
   let failures = 0
-  while (failures < MAX_CONSECUTIVE_FAILURES) {
+  while (process.ppid === serverPid) {
     try {
       await tick()
       failures = 0
@@ -58,7 +65,7 @@ export const runPoller = async (tick: () => Promise<void>, intervalMs: number) =
       failures++
       console.error(error)
     }
-    await new Promise((resolve) => setTimeout(resolve, intervalMs))
+    await new Promise((resolve) => setTimeout(resolve, retryDelay(intervalMs, failures)))
   }
-  console.error(`Stopping after ${MAX_CONSECUTIVE_FAILURES} failed updates in a row`)
+  console.error('Stopping because the Herdr server is gone')
 }
